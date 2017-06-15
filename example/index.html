@@ -57,7 +57,7 @@
       request.jsonp({
         url: root + '/posts/1',
         callback: 'callback',
-        cache:true,
+        cache:false,
         success:function(res) {
           alert(JSON.stringify(res))
         }
@@ -65,7 +65,7 @@
     }
 
   // jsonp with cache    
-    document.getElementById('jsonp').onclick = function() {
+    document.getElementById('jsonpCache').onclick = function() {
       request.jsonp({
         url: root + '/posts/1',
         callback: 'callback',

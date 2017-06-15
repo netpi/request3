@@ -90,4 +90,5 @@ request.mobile({ // 调起 native 方法
 主要参考资料 :
 
 https://github.com/marcuswestin/store.js
+
 http://www.jianshu.com/p/9b52aaff4f5a

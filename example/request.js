@@ -63,7 +63,7 @@
 /******/ 	__webpack_require__.p = "";
 /******/
 /******/ 	// Load entry module and return exports
-/******/ 	return __webpack_require__(__webpack_require__.s = 5);
+/******/ 	return __webpack_require__(__webpack_require__.s = 2);
 /******/ })
 /************************************************************************/
 /******/ ([
@@ -189,7 +189,7 @@ function isObject(val) {
 	return val && {}.toString.call(val) === '[object Object]'
 }
 
-/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(12)))
+/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(8)))
 
 /***/ }),
 /* 1 */
@@ -197,17 +197,16 @@ function isObject(val) {
 
 "use strict";
 Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
-/* WEBPACK VAR INJECTION */(function(module) {/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__jsRouter__ = __webpack_require__(3);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__jsRouter___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_0__jsRouter__);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__ajax__ = __webpack_require__(2);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__ajax___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_1__ajax__);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__jsonp__ = __webpack_require__(4);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__jsonp___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_2__jsonp__);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__store__ = __webpack_require__(6);
+/* WEBPACK VAR INJECTION */(function(module) {/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__utils_jsRouter__ = __webpack_require__(11);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__utils_jsRouter___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_0__utils_jsRouter__);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__utils_ajax__ = __webpack_require__(10);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__utils_ajax___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_1__utils_ajax__);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__utils_jsonp__ = __webpack_require__(12);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__utils_jsonp___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_2__utils_jsonp__);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__utils_store__ = __webpack_require__(13);
 
 
 
-// import cache from './cache'
 
 class Request {
 
@@ -225,29 +224,29 @@ class Request {
     this._request({ method: 'mobile', options: Array.from(arguments) })
   }
   _request ({ method, options }) {
+    // 覆盖全局
     options = Object.assign({}, this.options, options)
     const success = options.success
     const fail = options.fail
     const expire = options.expire
     const cache = options.cache || false
+    // 生成缓存key
     let cacheKey = this._getCacheKey(method, options)
     let that = this
     if (cache) {
-      let result = __WEBPACK_IMPORTED_MODULE_3__store__["a" /* default */].get(cacheKey)
-      if(result) {
+      let result = __WEBPACK_IMPORTED_MODULE_3__utils_store__["a" /* default */].get(cacheKey)
+      if(result) { // 如果有缓存直接返回结果
         console.log('get [ %s ] cache', cacheKey)
         that._handelResult({result, success, fail, setCache: false, expire, cacheKey})
         return
       }
     }
-    
     if (method === 'ajax') {
-      __WEBPACK_IMPORTED_MODULE_1__ajax___default()(options, function (err, result) {
-        
+      __WEBPACK_IMPORTED_MODULE_1__utils_ajax___default()(options, function (err, result) {
         that._handelResult({err, result, success, fail, setCache: cache, expire, cacheKey})
       })
     } else if (method === 'jsonp') {
-      __WEBPACK_IMPORTED_MODULE_2__jsonp___default()(options, function (err, result) {
+      __WEBPACK_IMPORTED_MODULE_2__utils_jsonp___default()(options, function (err, result) {
         that._handelResult({err, result, success, fail, setCache: cache, expire, cacheKey})
         return
       })
@@ -255,6 +254,7 @@ class Request {
       const json = options[0]
       const success = json.success
       delete json.success
+      // 吊起 native 方法
       webBridge.request(json, function (err, result) {
         that._handelResult({err, result, success, fail, setCache: cache, expire, cacheKey})
         return
@@ -262,10 +262,10 @@ class Request {
     }
   }
   _getCacheKey(method, options) {
-    // 防止参数顺序改变
     let data = {}
     if(options.data){
-      data = Object.keys(options.data).sort((a,b)=> a - b).map( key => options.data[key])
+      // 防止参数顺序改变 , 造成缓存未击中
+      data = Object.keys(options.data).sort((a, b) => a - b).map( key => options.data[key])
     }
     return `${method}_${options.url}_${options.headers}_${JSON.stringify(data)}_${options.type}_${options.dataType}`
   }
@@ -273,7 +273,7 @@ class Request {
     if (!err) {
       if (setCache) {
         console.log('set cache .........', cacheKey)
-        __WEBPACK_IMPORTED_MODULE_3__store__["a" /* default */].set(cacheKey, result, new Date().getTime() + expire)
+        __WEBPACK_IMPORTED_MODULE_3__utils_store__["a" /* default */].set(cacheKey, result, new Date().getTime() + expire)
       }
       success(result)
     } else if (fail) {
@@ -288,214 +288,17 @@ if (typeof module !== 'undefined' && typeof module.exports !== 'undefined') {
   window.Request = Request
 }
 
-/* WEBPACK VAR INJECTION */}.call(__webpack_exports__, __webpack_require__(13)(module)))
+/* WEBPACK VAR INJECTION */}.call(__webpack_exports__, __webpack_require__(9)(module)))
 
 /***/ }),
 /* 2 */
-/***/ (function(module, exports) {
-
-function ajax (options, callback) {
-  options = options || {}
-  options.type = (options.type || "GET").toUpperCase()
-  options.dataType = options.dataType || "json"
-  var params = formatParams(options.data)
-  //创建 - 非IE6 - 第一步
-  if (window.XMLHttpRequest) {
-    var xhr = new XMLHttpRequest()
-  } else { //IE6及其以下版本浏览器
-    var xhr = new ActiveXObject('Microsoft.XMLHTTP')
-  }
-
-  //接收 - 第三步
-  xhr.onreadystatechange = function () {
-    if (xhr.readyState == 4) {
-      var status = xhr.status
-      if (status >= 200 && status < 300) {
-        callback(null, xhr.responseText)
-      } else {
-        callback(new Error(status))
-      }
-    }
-  }
-
-  //连接 和 发送 - 第二步
-  if (options.type == "GET") {
-    xhr.open("GET", options.url + "?" + params, true)
-    xhr.send(null)
-  } else if (options.type == "POST") {
-    xhr.open("POST", options.url, true)
-      //设置表单提交时的内容类型
-    xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded")
-    xhr.send(params)
-  }
-}
-//格式化参数
-function formatParams(data) {
-  var arr = []
-  for (var name in data) {
-    arr.push(encodeURIComponent(name) + "=" + encodeURIComponent(data[name]))
-  }
-  arr.push(("v=" + Math.random()).replace("."))
-  return arr.join("&")
-}
-
-module.exports = ajax
-
-/***/ }),
-/* 3 */
-/***/ (function(module, exports) {
-
-(function (win) {
-
-  var ua = navigator.userAgent
-
-  function  getQueryString(name) {
-    var reg = new RegExp('(^|&)' + name + '=([^&]*)(&|$)', 'i')
-    var r = window.location.search.substr(1).match(reg)
-    if (r !== null) return unescape(r[2])
-    return null
-  }
-
-  function  isAndroid() {
-    return ua.indexOf('Android') > 0
-  }
-
-  function  isIOS() {
-    return /(iPhone|iPad|iPod)/i.test(ua)
-  }
-  var mobile = {
-
-      /**
-       *通过bridge调用app端的方法
-       * @param method
-       * @param params
-       * @param callback
-       */
-      callAppRouter: function (method, params, callback) {
-        var req = {
-          'Method': method,
-          'Data': params
-        }
-        if (isIOS()) {
-          win.bridge.callRouter(req, function (err, result) {
-            var resultObj = null
-            var errorMsg = null
-            if (typeof(result) !== 'undefined' && result !== 'null' && result !== null) {
-              resultObj = JSON.parse(result)
-              if (resultObj) {
-                resultObj = resultObj['result']
-              }
-            }
-            if (err !== 'null' && typeof(err) !== 'undefined' && err !== null) {
-              errorMsg = err
-            }
-            callback(err, resultObj)
-          })
-        } else if (isAndroid()) {
-          //生成回调函数方法名称
-          var cbName = 'CB_' + Date.now() + '_' + Math.ceil(Math.random() * 10)
-            //挂载一个临时函数到window变量上，方便app回调
-          win[cbName] = function (err, result) {
-            var resultObj
-            if (typeof(result) !== 'undefined' && result !== null) {
-              resultObj = JSON.parse(result)['result']
-            }
-            callback(err, resultObj)
-              //回调成功之后删除挂载到window上的临时函数
-            delete win[cbName]
-          }
-          win.bridge.callRouter(JSON.stringify(req), cbName)
-        }
-      },
-      request: function (params, success) {
-        this.callAppRouter('request', params, function (errMsg, res) {
-          return success(errMsg, res)
-        })
-      }
-    }
-    //将mobile对象挂载到window全局
-
-  win.webBridge = mobile
-})(window)
-
-/***/ }),
-/* 4 */
-/***/ (function(module, exports) {
-
-function jsonp(options, callback) {
-  options = options || {}
-  if (!options.data) options.data = {}
-  if (!options.url || !options.callback) {
-    throw new Error("参数不合法")
-  }
-
-  //创建 script 标签并加入到页面中
-  var callbackName = ('jsonp_' + Math.random()).replace(".", "")
-  var oHead = document.getElementsByTagName('head')[0]
-  options.data[options.callback] = callbackName
-  var params = formatParams(options.data)
-  var oS = document.createElement('script')
-  oHead.appendChild(oS)
-
-  //创建jsonp回调函数
-  window[callbackName] = function(json) {
-    oHead.removeChild(oS)
-    clearTimeout(oS.timer)
-    window[callbackName] = null
-    callback && callback(null, json)
-  }
-
-  //发送请求
-  oS.src = options.url + '?' + params
-
-  //超时处理
-  if (options.time) {
-    oS.timer = setTimeout(function() {
-      window[callbackName] = null
-      oHead.removeChild(oS)
-      callback && callback({ message: "超时" })
-    }, time)
-  }
-}
-
-//格式化参数
-function formatParams (data) {
-  var arr = []
-  for (let name in data) {
-    arr.push(encodeURIComponent(name) + '=' + encodeURIComponent(data[name]))
-  }
-  return arr.join('&')
-}
-module.exports = jsonp
-
-
-/***/ }),
-/* 5 */
 /***/ (function(module, exports, __webpack_require__) {
 
 module.exports = __webpack_require__(1)
 
 
 /***/ }),
-/* 6 */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-var engine = __webpack_require__(9)
-var storages = [
-  __webpack_require__(11),
-  __webpack_require__(10)
-]
-var plugins = [
-  __webpack_require__(7),
-  __webpack_require__(8)
-]
-var store = engine.createStore(storages, plugins)
-/* harmony default export */ __webpack_exports__["a"] = (store);
-
-
-/***/ }),
-/* 7 */
+/* 3 */
 /***/ (function(module, exports) {
 
 module.exports = defaultsPlugin
@@ -520,7 +323,7 @@ function defaultsPlugin() {
 
 
 /***/ }),
-/* 8 */
+/* 4 */
 /***/ (function(module, exports) {
 
 var namespace = 'expire_mixin'
@@ -563,7 +366,7 @@ function expirePlugin() {
 
 
 /***/ }),
-/* 9 */
+/* 5 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var util = __webpack_require__(0)
@@ -785,7 +588,7 @@ function createStore(storages, plugins) {
 
 
 /***/ }),
-/* 10 */
+/* 6 */
 /***/ (function(module, exports, __webpack_require__) {
 
 // cookieStorage is useful Safari private browser mode, where localStorage
@@ -852,7 +655,7 @@ function _has(key) {
 
 
 /***/ }),
-/* 11 */
+/* 7 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var util = __webpack_require__(0)
@@ -896,7 +699,7 @@ function clearAll() {
 
 
 /***/ }),
-/* 12 */
+/* 8 */
 /***/ (function(module, exports) {
 
 var g;
@@ -923,7 +726,7 @@ module.exports = g;
 
 
 /***/ }),
-/* 13 */
+/* 9 */
 /***/ (function(module, exports) {
 
 module.exports = function(originalModule) {
@@ -950,6 +753,203 @@ module.exports = function(originalModule) {
 	}
 	return module;
 };
+
+
+/***/ }),
+/* 10 */
+/***/ (function(module, exports) {
+
+function ajax (options, callback) {
+  options = options || {}
+  options.type = (options.type || "GET").toUpperCase()
+  options.dataType = options.dataType || "json"
+  var params = formatParams(options.data)
+  //创建 - 非IE6 - 第一步
+  if (window.XMLHttpRequest) {
+    var xhr = new XMLHttpRequest()
+  } else { //IE6及其以下版本浏览器
+    var xhr = new ActiveXObject('Microsoft.XMLHTTP')
+  }
+
+  //接收 - 第三步
+  xhr.onreadystatechange = function () {
+    if (xhr.readyState == 4) {
+      var status = xhr.status
+      if (status >= 200 && status < 300) {
+        callback(null, xhr.responseText)
+      } else {
+        callback(new Error(status))
+      }
+    }
+  }
+
+  //连接 和 发送 - 第二步
+  if (options.type == "GET") {
+    xhr.open("GET", options.url + "?" + params, true)
+    xhr.send(null)
+  } else if (options.type == "POST") {
+    xhr.open("POST", options.url, true)
+      //设置表单提交时的内容类型
+    xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded")
+    xhr.send(params)
+  }
+}
+//格式化参数
+function formatParams(data) {
+  var arr = []
+  for (var name in data) {
+    arr.push(encodeURIComponent(name) + "=" + encodeURIComponent(data[name]))
+  }
+  arr.push(("v=" + Math.random()).replace("."))
+  return arr.join("&")
+}
+
+module.exports = ajax
+
+/***/ }),
+/* 11 */
+/***/ (function(module, exports) {
+
+(function (win) {
+
+  var ua = navigator.userAgent
+
+  function  getQueryString(name) {
+    var reg = new RegExp('(^|&)' + name + '=([^&]*)(&|$)', 'i')
+    var r = window.location.search.substr(1).match(reg)
+    if (r !== null) return unescape(r[2])
+    return null
+  }
+
+  function  isAndroid() {
+    return ua.indexOf('Android') > 0
+  }
+
+  function  isIOS() {
+    return /(iPhone|iPad|iPod)/i.test(ua)
+  }
+  var mobile = {
+
+      /**
+       *通过bridge调用app端的方法
+       * @param method
+       * @param params
+       * @param callback
+       */
+      callAppRouter: function (method, params, callback) {
+        var req = {
+          'Method': method,
+          'Data': params
+        }
+        if (isIOS()) {
+          win.bridge.callRouter(req, function (err, result) {
+            var resultObj = null
+            var errorMsg = null
+            if (typeof(result) !== 'undefined' && result !== 'null' && result !== null) {
+              resultObj = JSON.parse(result)
+              if (resultObj) {
+                resultObj = resultObj['result']
+              }
+            }
+            if (err !== 'null' && typeof(err) !== 'undefined' && err !== null) {
+              errorMsg = err
+            }
+            callback(err, resultObj)
+          })
+        } else if (isAndroid()) {
+          //生成回调函数方法名称
+          var cbName = 'CB_' + Date.now() + '_' + Math.ceil(Math.random() * 10)
+            //挂载一个临时函数到window变量上，方便app回调
+          win[cbName] = function (err, result) {
+            var resultObj
+            if (typeof(result) !== 'undefined' && result !== null) {
+              resultObj = JSON.parse(result)['result']
+            }
+            callback(err, resultObj)
+              //回调成功之后删除挂载到window上的临时函数
+            delete win[cbName]
+          }
+          win.bridge.callRouter(JSON.stringify(req), cbName)
+        }
+      },
+      request: function (params, success) {
+        this.callAppRouter('request', params, function (errMsg, res) {
+          return success(errMsg, res)
+        })
+      }
+    }
+    //将mobile对象挂载到window全局
+
+  win.webBridge = mobile
+})(window)
+
+/***/ }),
+/* 12 */
+/***/ (function(module, exports) {
+
+function jsonp(options, callback) {
+  options = options || {}
+  if (!options.data) options.data = {}
+  if (!options.url || !options.callback) {
+    throw new Error("参数不合法")
+  }
+
+  //创建 script 标签并加入到页面中
+  var callbackName = ('jsonp_' + Math.random()).replace(".", "")
+  var oHead = document.getElementsByTagName('head')[0]
+  options.data[options.callback] = callbackName
+  var params = formatParams(options.data)
+  var oS = document.createElement('script')
+  oHead.appendChild(oS)
+
+  //创建jsonp回调函数
+  window[callbackName] = function(json) {
+    oHead.removeChild(oS)
+    clearTimeout(oS.timer)
+    window[callbackName] = null
+    callback && callback(null, json)
+  }
+
+  //发送请求
+  oS.src = options.url + '?' + params
+
+  //超时处理
+  if (options.time) {
+    oS.timer = setTimeout(function() {
+      window[callbackName] = null
+      oHead.removeChild(oS)
+      callback && callback({ message: "超时" })
+    }, time)
+  }
+}
+
+//格式化参数
+function formatParams (data) {
+  var arr = []
+  for (let name in data) {
+    arr.push(encodeURIComponent(name) + '=' + encodeURIComponent(data[name]))
+  }
+  return arr.join('&')
+}
+module.exports = jsonp
+
+
+/***/ }),
+/* 13 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+var engine = __webpack_require__(5)
+var storages = [
+  __webpack_require__(7),
+  __webpack_require__(6)
+]
+var plugins = [
+  __webpack_require__(3),
+  __webpack_require__(4)
+]
+var store = engine.createStore(storages, plugins)
+/* harmony default export */ __webpack_exports__["a"] = (store);
 
 
 /***/ })
