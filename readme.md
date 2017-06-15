@@ -5,19 +5,22 @@ Request
 ### 目录结构
 
 ``` sh
+
 ├── dist
 │   └── request.js
 ├── example
-│   └── index.html
+│   ├── index.html
+│   └── request.js
 ├── lib
+│   ├── main.js
+│   └── request.js
+├── package.json
+├── readme.md
+├── utils
 │   ├── ajax.js
 │   ├── jsRouter.js
 │   ├── jsonp.js
-│   ├── main.js
-│   ├── request.js // 核心请求文件
-│   └── store.js 
-├── package.json
-├── readme.md
+│   └── store.js
 ├── webpack.config.js
 └── yarn.lock
 
