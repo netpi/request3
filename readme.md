@@ -45,4 +45,49 @@ Request
 
 等等 ...
 
-### 
+### 使用 
+
+web很简单
+
+```js
+var request = new Request({
+  cache: true // 默认 false
+  expire : 5000 //全局缓存过期时间 默认 10000
+})
+var root = 'https://jsonplaceholder.typicode.com';
+
+
+request.ajax({
+  url: root + '/posts/2',
+  method: 'GET',
+  cache: true, // 不填继承全局
+  expire: 3000, // 单个请求缓存过期时间
+  success: function(res) {
+    alert(res)
+  }
+})
+
+request.jsonp({
+  url: root + '/posts/1',
+  callback: 'callback', // 服务端接受callback的参数名
+  cache:true, // 是否缓存
+  success:function(res) {
+    alert(JSON.stringify(res))
+  }
+})
+
+// native端需要配合
+request.mobile({ // 调起 native 方法
+  url: root + '/posts/1',
+  cache:true, // 是否缓存
+  success: function(errMsg, res) {
+    alert(errMsg, res)
+  }
+})
+
+```
+
+主要参考资料 :
+
+https://github.com/marcuswestin/store.js
+http://www.jianshu.com/p/9b52aaff4f5a
