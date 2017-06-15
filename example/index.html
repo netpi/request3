@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=Edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0,user-scalable=no">
+  <meta http-equiv="Cache-Control" content="no-siteapp" />
+  <meta http-equiv="Cache-Control" content="no-transform" />
+  <title>test demo</title>
+</head>
+
+<body>
+  <button id="ajax">ajax</button> </br></br>
+  <button id="ajaxCache">ajax 开启缓存 5s </button> </br></br>
+  <hr>
+  <button id="jsonp">jsonp</button> <br/><br/>
+  <button id="jsonpCache">jsonp 开启缓存 10s</button> <br/><br/>
+  <hr>
+  <button id="mobile">hybird 调起native发请求</button> <br/><br/>
+  <button id="mobileCache">hybird 调起native发请求 开启缓存 10s</button> 
+
+  <!--<script type="text/javascript" src="../dist/request.js"></script>-->
+  <script type="text/javascript" src="./request.js"></script>
+  <script>
+    var request = new Request({})
+    var root = 'https://jsonplaceholder.typicode.com';
+
+// ajax
+    document.getElementById('ajax').onclick = function() {
+      request.ajax({
+        url: root + '/posts/2',
+        method: 'GET',
+        cache:false,
+        success: function(res) {
+          alert(res)
+        }
+      })
+    }
+
+    // ajax with cache
+
+    document.getElementById('ajaxCache').onclick = function() {
+      request.ajax({
+        url: root + '/posts/2',
+        method: 'GET',
+        cache:true,
+        expire:5000, // 5秒
+        success: function(res) {
+          alert(res)
+        }
+      })
+    }
+    
+  // jsonp
+    document.getElementById('jsonp').onclick = function() {
+      request.jsonp({
+        url: root + '/posts/1',
+        callback: 'callback',
+        cache:true,
+        success:function(res) {
+          alert(JSON.stringify(res))
+        }
+      })
+    }
+
+  // jsonp with cache    
+    document.getElementById('jsonp').onclick = function() {
+      request.jsonp({
+        url: root + '/posts/1',
+        callback: 'callback',
+        cache:true,
+        success:function(res) {
+          alert(JSON.stringify(res))
+        }
+      })
+    }
+
+    // native request 
+    document.getElementById('mobile').onclick = function() {
+      request.mobile({
+        url: root + '/posts/1',
+        
+        success: function(errMsg, res) {
+          alert(errMsg, res)
+        }
+        
+      })
+    }
+
+    // native request  with cache
+    document.getElementById('mobileCache').onclick = function() {
+      request.mobile({
+        url: root + '/posts/1',
+        cache:true,
+        success: function(errMsg, res) {
+          alert(errMsg, res)
+        }
+      })
+    }
+  </script>
+
+</body>
+
+</html>
