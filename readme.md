@@ -7,12 +7,10 @@ Request
 ``` sh
 
 ├── dist
-│   └── request.js
 ├── example
 │   ├── index.html
 │   └── request.js
 ├── lib
-│   ├── main.js
 │   └── request.js
 ├── package.json
 ├── readme.md
@@ -45,7 +43,7 @@ Request
 - [ ] 代码目录结构优化
 - [ ] 封装成完整可发布的npm库
 - [ ] webpack环境配置增强(如代码压缩/热更新/eslint等)
-
+- [x] 修复babel编译bug
 等等 ...
 
 ### 使用 

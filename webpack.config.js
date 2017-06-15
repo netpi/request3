@@ -6,7 +6,7 @@ function resolve (dir) {
 }
 module.exports = {
   entry: {
-    app: './lib/main.js'
+    app: './lib/request.js'
   },
   output: {
     path: path.join(__dirname, 'dist'),
@@ -17,10 +17,13 @@ module.exports = {
     alias: {}
   },
   module: {
-    rules: [{
+    loaders: [{
       test: /\.js$/,
       loader: 'babel-loader',
-      include: [resolve('lib')]
+      exclude: /(node_modules|bower_components)/,
+      query: {
+        presets: ['es2015', 'stage-0']
+      }
     }]
   }
 }
