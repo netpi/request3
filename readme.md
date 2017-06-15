@@ -2,6 +2,10 @@ Request
 ---
 > send request with ajax jsonp and native request
 
+### 基本思路图
+
+<image src="https://olxvlcccu.qnssl.com/blog/g4kdu.jpg?imageslim" width=300/>
+
 ### 目录结构
 
 ``` sh
