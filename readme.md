@@ -48,7 +48,7 @@ Request
 
 ### 使用 
 
-web很简单
+> 演示 : https://request3.now.sh/
 
 ```js
 var request = new Request({
