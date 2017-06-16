@@ -36,7 +36,7 @@ Request
 - [x] 设计完成 Reuest 类基本结构
 - [x] 封装原生ajax 发送请求
 - [x] 封装jsonp 发送请求
-- [x] 调起 native 方法并handel回调
+- [x] 用js调起 native 方法 
 - [x] 添加全局参数 (局部请求参数优先)
 - [x] 抽象出统一请求 (方便加缓存)
 - [x] 设计并实现缓存系统 (基于 store.js 库)
