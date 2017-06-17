@@ -8,26 +8,26 @@ Request
 
 ### 目录结构
 
-``` js
+``` sh
 .
 ├── LICENSE
-├── lib // 最后打包生成 (es5)
+├── lib # 最后打包生成 (es5)
 │   ├── request3.js 
 │   └── request3.js.map
 ├── package.json
 ├── readme.md
-├── src // 源文件 (es6)
+├── src # 源文件 (es6)
 │   ├── adapter
-│   │   ├── ajax.js // ajax 通道 
-│   │   ├── jsRouter.js // native 通道 (js 桥接)
-│   │   └── jsonp.js // jsonp 通道
+│   │   ├── ajax.js # ajax 通道 
+│   │   ├── jsRouter.js # native 通道 (js 桥接)
+│   │   └── jsonp.js # jsonp 通道
 │   ├── core
-│   │   ├── InterceptorManager.js // 拦截器 AOP的实现
-│   │   ├── Request.js // Api入口
-│   │   ├── cache.js // 缓存
-│   │   └── dispatchRequest.js // 请求通道分发
-│   ├── default.js // 默认配置
-│   ├── request3.js // Api 实例
+│   │   ├── InterceptorManager.js # 拦截器 AOP的实现
+│   │   ├── Request.js # Api入口
+│   │   ├── cache.js # 缓存
+│   │   └── dispatchRequest.js # 请求通道分发
+│   ├── default.js # 默认配置
+│   ├── request3.js # Api 实例
 │   └── utils
 │       └── store.js
 ├── test
@@ -38,7 +38,7 @@ Request
 
 ### TODO
 
-最新TODO (2017.6.17 下午8点)
+最新TODO (2017.6.17 )
 
 - [x] 重构了架构
   - [x] 利用Promise 实现 AOP 拦截, 实现了方法可注册, 从而将 `request` `response` 独立出来
@@ -46,9 +46,9 @@ Request
   - [x] 支持 `request.get` `request.post` 方式请求, 并且保证通道对web端透明
   - [x] 实现了开发环境热更新, 提高开发效率
   - [x] 完善了webpack 环境配置, 支持生产环境 代码压缩 source-map 等
-
-> 目前完成以下这些 基本用时6个小时左右吧 (已懵逼)! (2017.6.16 凌晨4点)
 ---
+> 目前完成以下这些 基本用时6个小时左右吧 (已懵逼)! (2017.6.16 凌晨4点)
+
 - [x] 基础开发环境搭建
 - [x] 设计完成 Reuest 类基本结构
 - [x] 封装原生ajax 发送请求
