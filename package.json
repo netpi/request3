@@ -6,8 +6,7 @@
   "scripts": {
     "build": "webpack --env build",
     "dev": "webpack --progress --colors --watch --env dev",
-    "test": "mocha --compilers js:babel-core/register --colors ./test/*.spec.js",
-    "test:watch": "mocha --compilers js:babel-core/register --colors -w ./test/*.spec.js"
+    "test": "mocha --compilers js:babel-core/register --colors ./test/*.spec.js"
   },
   "devDependencies": {
     "babel-cli": "6.24.1",
@@ -37,12 +36,8 @@
     "umd",
     "commonjs"
   ],
-  "author": "Krasimir Tsonev",
-  "license": "MIT",
-  "bugs": {
-    "url": "https://github.com/krasimir/webpack-library-starter/issues"
-  },
-  "homepage": "https://github.com/krasimir/webpack-library-starter",
+  "author": "Netpi",
+  "license": "MIT",  
   "dependencies": {
     "es6-promise": "^4.1.0",
     "regenerator-runtime": "^0.10.5",
