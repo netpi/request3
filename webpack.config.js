@@ -1,29 +1,45 @@
-var path = require('path')
+/* global __dirname, require, module*/
 
+const webpack = require('webpack')
+const UglifyJsPlugin = webpack.optimize.UglifyJsPlugin
+const path = require('path')
+const env = require('yargs').argv.env // use --env with webpack 2
 
-function resolve (dir) {
-  return path.join(__dirname, '..', dir)
+let libraryName = 'request3'
+
+let plugins = [], outputFile
+
+if (env === 'build') {
+  plugins.push(new UglifyJsPlugin({ minimize: true }))
+  outputFile = libraryName + '.min.js'
+} else {
+  outputFile = libraryName + '.js'
 }
-module.exports = {
-  entry: {
-    app: './lib/request.js'
-  },
+
+const config = {
+  entry: __dirname + '/src/index.js',
+  devtool: 'source-map',
   output: {
-    path: path.join(__dirname, 'dist'),
-    filename: 'request.js'
-  },
-  resolve: {
-    extensions: ['.js', '.json'],
-    alias: {}
+    path: __dirname + '/example',
+    filename: outputFile,
+    library: libraryName,
+    libraryTarget: 'umd',
+    umdNamedDefine: true
   },
   module: {
-    loaders: [{
-      test: /\.js$/,
-      loader: 'babel-loader',
-      exclude: /(node_modules|bower_components)/,
-      query: {
-        presets: ['es2015', 'stage-0']
+    rules: [
+      {
+        test: /(\.jsx|\.js)$/,
+        loader: 'babel-loader',
+        exclude: /(node_modules|bower_components)/
       }
-    }]
-  }
+    ]
+  },
+  resolve: {
+    modules: [path.resolve('./src'), path.join(__dirname, 'node_modules')],
+    extensions: ['.json', '.js']
+  },
+  plugins: plugins
 }
+
+module.exports = config

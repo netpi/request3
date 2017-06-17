@@ -1,99 +1,83 @@
-Request
----
-> send request with ajax jsonp and native request
+# Webpack library starter
 
-### 基本思路图
+Webpack based boilerplate for producing libraries (Input: ES6, Output: universal library)
 
-<image src="https://olxvlcccu.qnssl.com/blog/g4kdu.jpg?imageslim" width=300/>
+## Features
 
-### 目录结构
+* Webpack 2 based.
+* ES6 as a source.
+* Exports in a [umd](https://github.com/umdjs/umd) format so your library works everywhere.
+* ES6 test setup with [Mocha](http://mochajs.org/) and [Chai](http://chaijs.com/).
+* Linting with [ESLint](http://eslint.org/).
 
-``` sh
-
-├── dist
-├── example
-│   ├── index.html
-│   └── request.js
-├── lib
-│   └── request.js
-├── package.json
-├── readme.md
-├── utils
-│   ├── ajax.js
-│   ├── jsRouter.js
-│   ├── jsonp.js
-│   └── store.js
-├── webpack.config.js
-└── yarn.lock
+## Process
 
 ```
+ES6 source files
+       |
+       |
+    webpack
+       |
+       +--- babel, eslint
+       |
+  ready to use
+     library
+  in umd format
+```
 
-### TODO
+*Have in mind that you have to build your library before publishing. The files under the `lib` folder are the ones that should be distributed.*
 
-> 目前完成以下这些 基本用时6个小时左右吧 (已懵逼)!
+## Getting started
 
-- [x] 基础开发环境搭建
-- [x] 设计完成 Reuest 类基本结构
-- [x] 封装原生ajax 发送请求
-- [x] 封装jsonp 发送请求
-- [x] 用js调起 native 方法 
-- [x] 添加全局参数 (局部请求参数优先)
-- [x] 抽象出统一请求 (方便加缓存)
-- [x] 设计并实现缓存系统 (基于 store.js 库)
-- [x] 添加 example 并调试
-- [ ] 添加 e2e 测试用例
-- [ ] request 支持 promise 
-- [ ] 完善错误处理机制
-- [ ] 代码目录结构优化
-- [ ] 封装成完整可发布的npm库
-- [ ] webpack环境配置增强(如代码压缩/热更新/eslint等)
-- [x] 修复babel编译bug
-等等 ...
+1. Setting up the name of your library
+  * Open `webpack.config.js` file and change the value of `libraryName` variable.
+  * Open `package.json` file and change the value of `main` property so it matches the name of your library.
+2. Build your library
+  * Run `npm install` to get the project's dependencies
+  * Run `npm run build` to produce minified version of your library.
+3. Development mode
+  * Having all the dependencies installed run `npm run dev`. This command will generate an non-minified version of your library and will run a watcher so you get the compilation on file change.
+4. Running the tests
+  * Run `npm run test`
 
-### 使用 
+## Scripts
 
-> 演示 : https://request3.now.sh/
+* `npm run build` - produces production version of your library under the `lib` folder
+* `npm run dev` - produces development version of your library and runs a watcher
+* `npm run test` - well ... it runs the tests :)
+* `npm run test:watch` - same as above but in a watch mode
+
+## Readings
+
+* [Start your own JavaScript library using webpack and ES6](http://krasimirtsonev.com/blog/article/javascript-library-starter-using-webpack-es6)
+
+## Misc
+
+### An example of using dependencies that shouldn’t be resolved by webpack, but should become dependencies of the resulting bundle
+
+In the following example we are excluding React and Lodash:
 
 ```js
-var request = new Request({
-  cache: true // 默认 false
-  expire : 5000 //全局缓存过期时间 默认 10000
-})
-var root = 'https://jsonplaceholder.typicode.com';
-
-
-request.ajax({
-  url: root + '/posts/2',
-  method: 'GET',
-  cache: true, // 不填继承全局
-  expire: 3000, // 单个请求缓存过期时间
-  success: function(res) {
-    alert(res)
+{
+  devtool: 'source-map',
+  output: {
+    path: '...',
+    libraryTarget: 'umd',
+    library: '...'
+  },
+  entry: '...',
+  ...
+  externals: {
+    react: 'react'
+    // Use more complicated mapping for lodash.
+    // We need to access it differently depending
+    // on the environment.
+    lodash: {
+      commonjs: 'lodash',
+      commonjs2: 'lodash',
+      amd: '_',
+      root: '_'
+    }
   }
-})
-
-request.jsonp({
-  url: root + '/posts/1',
-  callback: 'callback', // 服务端接受callback的参数名
-  cache:true, // 是否缓存
-  success:function(res) {
-    alert(JSON.stringify(res))
-  }
-})
-
-// native端需要配合
-request.mobile({ // 调起 native 方法
-  url: root + '/posts/1',
-  cache:true, // 是否缓存
-  success: function(errMsg, res) {
-    alert(errMsg, res)
-  }
-})
-
+}
 ```
-
-主要参考资料 :
-
-https://github.com/marcuswestin/store.js
-
-http://www.jianshu.com/p/9b52aaff4f5a
