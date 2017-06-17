@@ -1,83 +1,94 @@
-# Webpack library starter
+Request
+---
+> send request with ajax jsonp and native request
 
-Webpack based boilerplate for producing libraries (Input: ES6, Output: universal library)
+### 基本思路图
 
-## Features
+<image src="https://olxvlcccu.qnssl.com/blog/g4kdu.jpg?imageslim" width=300/>
 
-* Webpack 2 based.
-* ES6 as a source.
-* Exports in a [umd](https://github.com/umdjs/umd) format so your library works everywhere.
-* ES6 test setup with [Mocha](http://mochajs.org/) and [Chai](http://chaijs.com/).
-* Linting with [ESLint](http://eslint.org/).
+### 目录结构
 
-## Process
+``` js
+.
+├── LICENSE
+├── lib // 最后打包生成 (es5)
+│   ├── request3.js 
+│   └── request3.js.map
+├── package.json
+├── readme.md
+├── src // 源文件 (es6)
+│   ├── adapter
+│   │   ├── ajax.js // ajax 通道 
+│   │   ├── jsRouter.js // native 通道 (js 桥接)
+│   │   └── jsonp.js // jsonp 通道
+│   ├── core
+│   │   ├── InterceptorManager.js // 拦截器 AOP的实现
+│   │   ├── Request.js // Api入口
+│   │   ├── cache.js // 缓存
+│   │   └── dispatchRequest.js // 请求通道分发
+│   ├── default.js // 默认配置
+│   ├── request3.js // Api 实例
+│   └── utils
+│       └── store.js
+├── test
+├── webpack.config.js
+└── yarn.lock
 
 ```
-ES6 source files
-       |
-       |
-    webpack
-       |
-       +--- babel, eslint
-       |
-  ready to use
-     library
-  in umd format
-```
 
-*Have in mind that you have to build your library before publishing. The files under the `lib` folder are the ones that should be distributed.*
+### TODO
 
-## Getting started
+最新TODO (2017.6.17 下午8点)
 
-1. Setting up the name of your library
-  * Open `webpack.config.js` file and change the value of `libraryName` variable.
-  * Open `package.json` file and change the value of `main` property so it matches the name of your library.
-2. Build your library
-  * Run `npm install` to get the project's dependencies
-  * Run `npm run build` to produce minified version of your library.
-3. Development mode
-  * Having all the dependencies installed run `npm run dev`. This command will generate an non-minified version of your library and will run a watcher so you get the compilation on file change.
-4. Running the tests
-  * Run `npm run test`
+- [x] 重构了架构
+  - [x] 利用Promise 实现 AOP 拦截, 实现了方法可注册, 从而将 `request` `response` 独立出来
+  - [x] 完成  `dispatchRequest.js` 实现通道配置
+  - [x] 支持 `request.get` `request.post` 方式请求, 并且保证通道对web端透明
+  - [x] 实现了开发环境热更新, 提高开发效率
+  - [x] 完善了webpack 环境配置, 支持生产环境 代码压缩 source-map 等
 
-## Scripts
+> 目前完成以下这些 基本用时6个小时左右吧 (已懵逼)! (2017.6.16 凌晨4点)
+---
+- [x] 基础开发环境搭建
+- [x] 设计完成 Reuest 类基本结构
+- [x] 封装原生ajax 发送请求
+- [x] 封装jsonp 发送请求
+- [x] 用js调起 native 方法 
+- [x] 添加全局参数 (局部请求参数优先)
+- [x] 抽象出统一请求 (方便加缓存)
+- [x] 设计并实现缓存系统 (基于 store.js 库)
+- [x] 添加 example 并调试
+- [ ] 添加 e2e 测试用例
+- [ ] request 支持 promise 
+- [ ] 完善错误处理机制
+- [ ] 代码目录结构优化
+- [ ] 封装成完整可发布的npm库
+- [ ] webpack环境配置增强(如代码压缩/热更新/eslint等)
+- [x] 修复babel编译bug
+等等 ...
 
-* `npm run build` - produces production version of your library under the `lib` folder
-* `npm run dev` - produces development version of your library and runs a watcher
-* `npm run test` - well ... it runs the tests :)
-* `npm run test:watch` - same as above but in a watch mode
+### 使用 
 
-## Readings
-
-* [Start your own JavaScript library using webpack and ES6](http://krasimirtsonev.com/blog/article/javascript-library-starter-using-webpack-es6)
-
-## Misc
-
-### An example of using dependencies that shouldn’t be resolved by webpack, but should become dependencies of the resulting bundle
-
-In the following example we are excluding React and Lodash:
+> 演示 : https://request3.now.sh/
 
 ```js
-{
-  devtool: 'source-map',
-  output: {
-    path: '...',
-    libraryTarget: 'umd',
-    library: '...'
-  },
-  entry: '...',
-  ...
-  externals: {
-    react: 'react'
-    // Use more complicated mapping for lodash.
-    // We need to access it differently depending
-    // on the environment.
-    lodash: {
-      commonjs: 'lodash',
-      commonjs2: 'lodash',
-      amd: '_',
-      root: '_'
-    }
-  }
-}
+
+var root = 'https://jsonplaceholder.typicode.com';
+
+request3.get({
+  url: root + '/posts/2',
+  cache: true, // 不填继承全局
+  expire: 3000, // 单个请求缓存过期时间
+  adapter:'ajax' // ajax json native ; default 'ajax'
+}).then(function(resp){
+  console.log(resp)
+})
+
+
 ```
+
+主要参考资料 :
+
+https://github.com/marcuswestin/store.js
+
+http://www.jianshu.com/p/9b52aaff4f5a

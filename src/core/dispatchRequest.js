@@ -7,7 +7,6 @@ const adapters = {
 }
 function dispatchRequest (options) {
   const adapter = adapters[options.adapeter || 'ajax']
-  // todo adaper具体实现
-  // 处理 cache
+  return adapter(options)
 }
 export default dispatchRequest
