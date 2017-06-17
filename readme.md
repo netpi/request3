@@ -23,12 +23,12 @@ Request
 │   │   └── jsonp.js # jsonp 通道
 │   ├── core
 │   │   ├── InterceptorManager.js # 拦截器 AOP的实现
-│   │   ├── Request.js # Api入口
-│   │   ├── cache.js # 缓存
+│   │   ├── Request.js # Api 核心
+│   │   ├── cache.js # 缓存
 │   │   └── dispatchRequest.js # 请求通道分发
 │   ├── default.js # 默认配置
-│   ├── request3.js # Api 实例
-│   └── utils
+│   ├── request3.js # Api 入口
+│   └── utils
 │       └── store.js
 ├── test
 ├── webpack.config.js
