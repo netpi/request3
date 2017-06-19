@@ -16,13 +16,13 @@ function Request3 (instanceConfig) {
 Request3.prototype.request = function request (options) {
   // 挂载拦截器
   let promise = Promise.resolve(options)
-  const chain = [dispatchRequest, undefined] // 注册 请求转发器
+  const chain = [dispatchRequest, undefined] // 拦截器链 注册 请求转发器
 
-  // request 的拦截
+  // request 的拦截注入
   this.interceptors.request.forEach(function unshiftRequestInterceptors (interceptor) {
     chain.unshift(interceptor.fulfilled, interceptor.rejected)
   })
-  // response 的拦截
+  // response 的拦截注入
   this.interceptors.response.forEach(function pushResponseInterceptors (interceptor) {
     chain.push(interceptor.fulfilled, interceptor.rejected)
   })
