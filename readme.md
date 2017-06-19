@@ -41,9 +41,9 @@ Request
 最新TODO (2017.6.17 )
 
 - [x] 重构了架构
-  - [x] 利用Promise 实现 AOP 拦截, 实现了方法可注册, 从而将 `request` `response` 独立出来 => [[具体代码](https://github.com/netpi/request3/blob/dev/src/core/Request.js#L21-L28)]
+  - [x] 利用Promise 实现 AOP 拦截, 实现了方法可注册, 从而将 `request` `response` 独立出来 => [[具体代码](https://github.com/netpi/request3/blob/dev/src/core/Request.js#L18-L34)]
   - [x] 完成  `dispatchRequest.js` 实现通道配置
-  - [x] 为request3动态注册 `['delete', 'get', 'head', 'options', 'post', 'put', 'patch']`方法 来支持 `request.get` `request.post` 方式请求, 并且保证通道对web端透明 => [[具体代码](https://github.com/netpi/request3/blob/dev/src/core/Request.js#L21-L28)]
+  - [x] 为request3动态注册 `['delete', 'get', 'head', 'options', 'post', 'put', 'patch']`方法 来支持 `request.get` `request.post` 方式请求, 并且保证通道对web端透明 => [[具体代码](https://github.com/netpi/request3/blob/dev/src/core/Request.js#L38-L40)]
   - [x] 实现了开发环境热更新, 提高开发效率
   - [x] 完善了webpack 环境配置, 支持生产环境 代码压缩 source-map 等
 ---
