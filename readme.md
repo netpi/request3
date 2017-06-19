@@ -47,6 +47,17 @@ Request
   - [x] 为request3动态注册 `['delete', 'get', 'head', 'options', 'post', 'put', 'patch']`方法 来支持 `request.get` `request.post` 方式请求, 并且保证通道对web端透明 => [[Request.js#L38-L40](https://github.com/netpi/request3/blob/dev/src/core/Request.js#L38-L40)]
   - [x] 实现了开发环境热更新, 提高开发效率
   - [x] 完善了webpack 环境配置, 支持生产环境 代码压缩 source-map 等
+
+本次重构的优点与特点
+
+* 利用promise 实现了AOP拦截 , 可以方便的在 chain 中注册方法 来实现`request` `response`的拦截, 利用拦截器实现了文件的分工分离.
+* 将API独立抽离出来, 动态为request3 注册`['delete', 'get', 'head', 'options', 'post', 'put', 'patch']` 等HTTP方法,支持 `request3.get()` 形式 . 并且实现了 `API` `转发器` `请求通道`的分离
+* 利用AOP 将缓存注册在 `request` 请求前后, 灵活控制缓存 
+* 完善了工程化流程 : 
+  * 清晰了开发架构, 
+  * 实现了开发环境的 `热更新`  
+  * 生产环境的  `代码压缩` `source-map` 等
+
 ---
 > 目前完成以下这些 基本用时6个小时左右吧 (已懵逼)! (2017.6.16 凌晨4点)
 
