@@ -12,7 +12,7 @@ Request
 .
 ├── LICENSE
 ├── lib # 最后打包生成 (es5)
-│   ├── request3.js 
+│   ├── request3.min.js (30k)
 │   └── request3.js.map
 ├── package.json
 ├── readme.md
